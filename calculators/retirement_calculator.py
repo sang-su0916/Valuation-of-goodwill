@@ -71,7 +71,7 @@ def retirement_calculator():
         monthly_savings = annual_savings / 12
         
         # 은퇴 자금 계산
-        retirement_fund = calculate_retirement_fund(
+        future_value = calculate_future_value(
             current_savings,
             monthly_savings,
             annual_return_rate / 100 / 12,
@@ -79,10 +79,9 @@ def retirement_calculator():
         )
         
         # 필요 은퇴 자금
-        monthly_return_rate = annual_return_rate / 100 / 12
         required_fund = calculate_required_retirement_fund(
             monthly_expenses,
-            monthly_return_rate,
+            annual_return_rate / 100 / 12,
             retirement_duration * 12
         )
         
@@ -90,18 +89,18 @@ def retirement_calculator():
         st.subheader("은퇴 준비 분석")
         
         col1, col2, col3 = st.columns(3)
-        col1.metric("예상 은퇴 자금", f"₩{retirement_fund:,.0f}")
+        col1.metric("예상 은퇴 자금", f"₩{future_value:,.0f}")
         col2.metric("필요 은퇴 자금", f"₩{required_fund:,.0f}")
         
         # 상태 표시
-        if retirement_fund >= required_fund:
-            surplus = retirement_fund - required_fund
+        if future_value >= required_fund:
+            surplus = future_value - required_fund
             surplus_percentage = (surplus / required_fund) * 100
             col3.metric("상태", "충분", f"+₩{surplus:,.0f} ({surplus_percentage:.1f}%)")
             
             st.success(f"축하합니다! 현재 계획대로라면 은퇴 자금이 {surplus_percentage:.1f}% 정도 더 여유있게 준비될 것으로 예상됩니다.")
         else:
-            deficit = required_fund - retirement_fund
+            deficit = required_fund - future_value
             deficit_percentage = (deficit / required_fund) * 100
             col3.metric("상태", "부족", f"-₩{deficit:,.0f} ({deficit_percentage:.1f}%)")
             
@@ -126,7 +125,7 @@ def retirement_calculator():
                 new_years_to_retirement = new_retirement_age - current_age
                 new_retirement_duration = life_expectancy - new_retirement_age
                 
-                new_retirement_fund = calculate_retirement_fund(
+                new_future_value = calculate_future_value(
                     current_savings,
                     monthly_savings,
                     annual_return_rate / 100 / 12,
@@ -135,14 +134,14 @@ def retirement_calculator():
                 
                 new_required_fund = calculate_required_retirement_fund(
                     monthly_expenses,
-                    monthly_return_rate,
+                    annual_return_rate / 100 / 12,
                     new_retirement_duration * 12
                 )
                 
-                if new_retirement_fund >= new_required_fund:
+                if new_future_value >= new_required_fund:
                     st.info(f"은퇴 나이를 {additional_years}년 늘려 {new_retirement_age}세에 은퇴하면 자금이 충분할 것으로 예상됩니다.")
                 else:
-                    new_deficit = new_required_fund - new_retirement_fund
+                    new_deficit = new_required_fund - new_future_value
                     new_deficit_percentage = (new_deficit / new_required_fund) * 100
                     st.info(f"은퇴 나이를 {additional_years}년 늘려도 여전히 {new_deficit_percentage:.1f}% 부족할 것으로 예상됩니다.")
         
@@ -152,24 +151,24 @@ def retirement_calculator():
         col1.metric("현재 월 저축액", f"₩{monthly_savings:,.0f}")
         col2.metric("은퇴 후 월 생활비", f"₩{monthly_expenses:,.0f}")
 
-def calculate_retirement_fund(current_savings, monthly_savings, monthly_return_rate, months):
+def calculate_future_value(initial_investment, monthly_contribution, monthly_rate, total_months):
     """은퇴 시점의 자금을 계산합니다."""
     # 현재 저축의 성장
-    future_savings = current_savings * (1 + monthly_return_rate) ** months
+    future_savings = initial_investment * (1 + monthly_rate) ** total_months
     
     # 월 저축의 성장 (복리 적용)
-    if monthly_return_rate > 0:
-        future_contributions = monthly_savings * ((1 + monthly_return_rate) ** months - 1) / monthly_return_rate
+    if monthly_rate > 0:
+        future_contributions = monthly_contribution * ((1 + monthly_rate) ** total_months - 1) / monthly_rate
     else:
-        future_contributions = monthly_savings * months
+        future_contributions = monthly_contribution * total_months
     
     return future_savings + future_contributions
 
-def calculate_required_retirement_fund(monthly_expenses, monthly_return_rate, retirement_months):
+def calculate_required_retirement_fund(monthly_expenses, monthly_rate, retirement_months):
     """은퇴 생활에 필요한 자금을 계산합니다."""
-    if monthly_return_rate > 0:
+    if monthly_rate > 0:
         # 현재 가치 계수(Present Value Annuity Factor)를 사용
-        pv_factor = (1 - 1 / (1 + monthly_return_rate) ** retirement_months) / monthly_return_rate
+        pv_factor = (1 - 1 / (1 + monthly_rate) ** retirement_months) / monthly_rate
         required_fund = monthly_expenses * pv_factor
     else:
         # 수익률이 0인 경우, 단순히 월 지출 * 개월 수
@@ -177,11 +176,11 @@ def calculate_required_retirement_fund(monthly_expenses, monthly_return_rate, re
     
     return required_fund
 
-def calculate_additional_savings_needed(deficit, monthly_return_rate, months):
+def calculate_additional_savings_needed(deficit, monthly_rate, months):
     """부족한 자금을 마련하기 위한 추가 월 저축액을 계산합니다."""
-    if monthly_return_rate > 0 and months > 0:
+    if monthly_rate > 0 and months > 0:
         # 미래 가치를 위한 월 납입액 공식의 역산
-        additional_monthly = deficit * monthly_return_rate / ((1 + monthly_return_rate) ** months - 1)
+        additional_monthly = deficit * monthly_rate / ((1 + monthly_rate) ** months - 1)
     else:
         # 수익률이 0이거나 기간이 0인 경우
         additional_monthly = deficit / months if months > 0 else deficit
