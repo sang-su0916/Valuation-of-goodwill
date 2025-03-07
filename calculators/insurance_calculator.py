@@ -178,20 +178,31 @@ def insurance_calculator():
             st.success("현재 모든 영역의 보장이 충분합니다. 정기적으로 상황 변화에 따라 재검토하세요.")
 
 def calculate_insurance_needs(age, annual_income, monthly_expenses, dependents, children_ages, spouse_exists, spouse_age, debt, savings):
-    """보험 필요액을 계산합니다."""
+    """필요한 보험 보장금액을 계산합니다."""
     results = {}
     
-    # 1. 생명보험 필요액 계산
-    # 기본 요소: 부채 상환 + 장례비용 + 소득 대체
+    # 생명보험 필요액 (소득 대체 + 부채 + 자녀 교육비 - 저축)
     years_to_retirement = 65 - age
     income_replacement_years = min(years_to_retirement, 20)  # 최대 20년간 소득 대체
+    income_replacement = annual_income * 0.7 * income_replacement_years  # 소득의 70%
     
-    # 소득 대체 필요액 (소득의 70%)
-    income_replacement_amount = annual_income * 0.7 * income_replacement_years
-    
-    # 기본 생명보험 필요액
-    life_insurance_need = debt + 30000000  # 부채 + 3천만원 장례비용
-    
-    # 자녀 교육비 추가 (대학 교육 가정, 1인당 1억원)
+    # 자녀 교육비 (대학교 4년 기준, 1인당 1억원 가정)
     education_costs = 0
-    for
+    for child_age in children_ages:
+        if child_age < 19:
+            education_costs += 100000000  # 자녀당 1억원
+    
+    life_insurance_need = income_replacement + debt + education_costs - savings
+    life_insurance_need = max(0, life_insurance_need)
+    
+    # 소득보장보험 필요액 (연간 소득의 60%)
+    disability_need = annual_income * 0.6
+    
+    # 중대질병보험 필요액 (연간 소득의 3배 + 치료비 5천만원 가정)
+    critical_illness_need = annual_income * 3 + 50000000
+    
+    results["생명보험"] = life_insurance_need
+    results["소득보장"] = disability_need
+    results["중대질병"] = critical_illness_need
+    
+    return results
