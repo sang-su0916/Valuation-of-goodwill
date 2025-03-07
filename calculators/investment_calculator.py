@@ -25,26 +25,35 @@ def investment_calculator():
     
     with col1:
         if calc_type == "미래가치(FV) 계산":
-            initial_investment = st.number_input(
+            initial_investment_text = st.text_input(
                 "초기투자금액 (원)",
-                min_value=0,
-                value=10000000,
-                step=1000000
+                value="10,000,000",
+                help="숫자만 입력하세요. 예: 10000000"
             )
+            try:
+                initial_investment = int(initial_investment_text.replace(',', ''))
+            except:
+                initial_investment = 10000000
         else:
-            target_amount = st.number_input(
+            target_amount_text = st.text_input(
                 "목표금액 (원)",
-                min_value=0,
-                value=100000000,
-                step=1000000
+                value="100,000,000",
+                help="숫자만 입력하세요. 예: 100000000"
             )
+            try:
+                target_amount = int(target_amount_text.replace(',', ''))
+            except:
+                target_amount = 100000000
             
-        monthly_contribution = st.number_input(
+        monthly_contribution_text = st.text_input(
             "월 투자금액 (원)",
-            min_value=0,
-            value=500000,
-            step=100000
+            value="500,000",
+            help="숫자만 입력하세요. 예: 500000"
         )
+        try:
+            monthly_contribution = int(monthly_contribution_text.replace(',', ''))
+        except:
+            monthly_contribution = 500000
     
     with col2:
         investment_period = st.number_input(
