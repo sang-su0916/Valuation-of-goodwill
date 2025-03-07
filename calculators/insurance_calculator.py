@@ -30,26 +30,35 @@ def insurance_calculator():
             spouse_retirement_age = st.number_input("배우자의 은퇴 희망 나이", min_value=spouse_age, max_value=90, value=65)
     
     with col2:
-        annual_income = st.number_input(
+        annual_income_text = st.text_input(
             "현재 연소득 (원)",
-            min_value=0,
-            value=60000000,
-            step=10000000
+            value="60,000,000",
+            help="숫자만 입력하세요. 예: 60000000"
         )
+        try:
+            annual_income = int(annual_income_text.replace(',', ''))
+        except:
+            annual_income = 60000000
         
-        monthly_living_expenses = st.number_input(
+        monthly_living_expenses_text = st.text_input(
             "월 생활비 (원)",
-            min_value=0,
-            value=3000000,
-            step=500000
+            value="3,000,000",
+            help="숫자만 입력하세요. 예: 3000000"
         )
+        try:
+            monthly_living_expenses = int(monthly_living_expenses_text.replace(',', ''))
+        except:
+            monthly_living_expenses = 3000000
         
-        current_debt = st.number_input(
+        current_debt_text = st.text_input(
             "현재 대출 잔액 (원)",
-            min_value=0,
-            value=200000000,
-            step=50000000
+            value="200,000,000",
+            help="숫자만 입력하세요. 예: 200000000"
         )
+        try:
+            current_debt = int(current_debt_text.replace(',', ''))
+        except:
+            current_debt = 200000000
     
     # 어린 자녀 정보
     if dependents > 0:
@@ -68,34 +77,46 @@ def insurance_calculator():
     col1, col2 = st.columns(2)
     
     with col1:
-        life_insurance = st.number_input(
+        life_insurance_text = st.text_input(
             "생명보험 보장금액 (원)",
-            min_value=0,
-            value=100000000,
-            step=50000000
+            value="100,000,000",
+            help="숫자만 입력하세요. 예: 100000000"
         )
+        try:
+            life_insurance = int(life_insurance_text.replace(',', ''))
+        except:
+            life_insurance = 100000000
         
-        disability_insurance = st.number_input(
+        disability_insurance_text = st.text_input(
             "소득보장보험 월 보장금액 (원)",
-            min_value=0,
-            value=0,
-            step=1000000
+            value="0",
+            help="숫자만 입력하세요. 예: 1000000"
         )
+        try:
+            disability_insurance = int(disability_insurance_text.replace(',', ''))
+        except:
+            disability_insurance = 0
     
     with col2:
-        critical_illness_insurance = st.number_input(
+        critical_illness_insurance_text = st.text_input(
             "중대질병보험 보장금액 (원)",
-            min_value=0,
-            value=50000000,
-            step=10000000
+            value="50,000,000",
+            help="숫자만 입력하세요. 예: 50000000"
         )
+        try:
+            critical_illness_insurance = int(critical_illness_insurance_text.replace(',', ''))
+        except:
+            critical_illness_insurance = 50000000
         
-        savings = st.number_input(
+        savings_text = st.text_input(
             "비상자금 (원)",
-            min_value=0,
-            value=20000000,
-            step=10000000
+            value="20,000,000",
+            help="숫자만 입력하세요. 예: 20000000"
         )
+        try:
+            savings = int(savings_text.replace(',', ''))
+        except:
+            savings = 20000000
     
     if st.button("계산하기", key="insurance_button", use_container_width=True):
         # 필요 보장금 계산
