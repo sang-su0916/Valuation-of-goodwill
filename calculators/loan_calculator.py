@@ -35,7 +35,7 @@ def loan_calculator():
             ["원리금균등상환", "원금균등상환", "만기일시상환"]
         )
 
-    if st.button("계산하기", key="loan_calc_button", use_container_width=True):
+    if st.button("계산하기", key="loan_button", use_container_width=True):
         monthly_rate = interest_rate / 12 / 100
         periods = loan_term * 12
 
