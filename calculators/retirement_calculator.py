@@ -61,7 +61,7 @@ def retirement_calculator():
             step=5.0
         )
     
-    if st.button("계산하기", use_container_width=True):
+    if st.button("계산하기", key="retirement_button", use_container_width=True):
         # 계산 로직
         years_to_retirement = retirement_age - current_age
         retirement_duration = life_expectancy - retirement_age
