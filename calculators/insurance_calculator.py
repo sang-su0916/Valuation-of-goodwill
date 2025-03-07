@@ -97,7 +97,7 @@ def insurance_calculator():
             step=10000000
         )
     
-    if st.button("계산하기", use_container_width=True):
+    if st.button("계산하기", key="insurance_button", use_container_width=True):
         # 필요 보장금 계산
         results = calculate_insurance_needs(
             age=age,
