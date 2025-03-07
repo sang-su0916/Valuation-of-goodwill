@@ -2,7 +2,8 @@ import sys
 import os
 
 # 현재 디렉토리 경로를 추가
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))import streamlit as st
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+import streamlit as st
 from calculators.loan_calculator import loan_calculator
 from calculators.investment_calculator import investment_calculator
 from calculators.retirement_calculator import retirement_calculator
