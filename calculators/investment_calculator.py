@@ -62,7 +62,7 @@ def investment_calculator():
             step=0.5
         )
     
-    if st.button("계산하기", use_container_width=True):
+    if st.button("계산하기", key="investment_button", use_container_width=True):
         monthly_rate = annual_return / 12 / 100
         total_months = investment_period * 12
         
