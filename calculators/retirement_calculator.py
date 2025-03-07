@@ -23,27 +23,36 @@ def retirement_calculator():
         retirement_age = st.number_input("은퇴 희망 나이", min_value=current_age + 1, max_value=90, value=65)
         life_expectancy = st.number_input("기대수명", min_value=retirement_age + 1, max_value=110, value=85)
         
-        current_savings = st.number_input(
+        current_savings_text = st.text_input(
             "현재 저축액 (원)",
-            min_value=0,
-            value=50000000,
-            step=10000000
+            value="50,000,000",
+            help="숫자만 입력하세요. 예: 50000000"
         )
+        try:
+            current_savings = int(current_savings_text.replace(',', ''))
+        except:
+            current_savings = 50000000
     
     with col2:
-        annual_income = st.number_input(
+        annual_income_text = st.text_input(
             "현재 연소득 (원)",
-            min_value=0,
-            value=50000000,
-            step=5000000
+            value="50,000,000",
+            help="숫자만 입력하세요. 예: 50000000"
         )
+        try:
+            annual_income = int(annual_income_text.replace(',', ''))
+        except:
+            annual_income = 50000000
         
-        monthly_expenses = st.number_input(
+        monthly_expenses_text = st.text_input(
             "은퇴 후 월 생활비 (원)",
-            min_value=0,
-            value=3000000,
-            step=500000
+            value="3,000,000",
+            help="숫자만 입력하세요. 예: 3000000"
         )
+        try:
+            monthly_expenses = int(monthly_expenses_text.replace(',', ''))
+        except:
+            monthly_expenses = 3000000
         
         annual_return_rate = st.number_input(
             "투자 수익률 (%)",
