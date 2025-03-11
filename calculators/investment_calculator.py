@@ -21,7 +21,8 @@ def investment_calculator():
     calc_type = st.radio(
         "계산 유형",
         options=["미래가치(FV) 계산", "현재가치(PV) 계산"],
-        horizontal=True
+        horizontal=True,
+        key="calc_type_radio"
     )
     
     tabs = st.tabs(["기본 입력", "상세 설정"])
@@ -34,7 +35,8 @@ def investment_calculator():
                 initial_investment_text = st.text_input(
                     "초기투자금액 (원)",
                     value="10,000,000",
-                    help="처음에 한 번 투자하는 금액"
+                    help="처음에 한 번 투자하는 금액",
+                    key="initial_investment_text"
                 )
                 try:
                     initial_investment = int(initial_investment_text.replace(',', ''))
@@ -44,7 +46,8 @@ def investment_calculator():
                 target_amount_text = st.text_input(
                     "목표금액 (원)",
                     value="100,000,000",
-                    help="미래에 달성하고자 하는 목표 금액"
+                    help="미래에 달성하고자 하는 목표 금액",
+                    key="target_amount_text"
                 )
                 try:
                     target_amount = int(target_amount_text.replace(',', ''))
@@ -54,7 +57,8 @@ def investment_calculator():
             monthly_contribution_text = st.text_input(
                 "정기 투자금액 (원)",
                 value="500,000",
-                help="정기적으로 추가 투자하는 금액"
+                help="정기적으로 추가 투자하는 금액",
+                key="monthly_contribution_text"
             )
             try:
                 monthly_contribution = int(monthly_contribution_text.replace(',', ''))
@@ -66,7 +70,8 @@ def investment_calculator():
                 "투자 주기",
                 options=["월 납입", "연 납입"],
                 horizontal=True,
-                index=0
+                index=0,
+                key="contribution_period_radio"
             )
         
         with col2:
@@ -75,14 +80,16 @@ def investment_calculator():
                 "투자 기간 단위",
                 options=["년", "월"],
                 horizontal=True,
-                index=0
+                index=0,
+                key="period_unit_radio"
             )
             
             if period_unit == "년":
                 investment_period_text = st.text_input(
                     "투자기간 (년)",
                     value="10",
-                    help="투자 기간"
+                    help="투자 기간",
+                    key="investment_period_years_text"
                 )
                 try:
                     investment_period = int(investment_period_text.replace(',', ''))
@@ -94,7 +101,8 @@ def investment_calculator():
                 investment_period_text = st.text_input(
                     "투자기간 (월)",
                     value="120",
-                    help="투자 기간"
+                    help="투자 기간",
+                    key="investment_period_months_text"
                 )
                 try:
                     investment_period = int(investment_period_text.replace(',', ''))
@@ -108,14 +116,16 @@ def investment_calculator():
                 "수익률 단위",
                 options=["연이율", "월이율"],
                 horizontal=True,
-                index=0
+                index=0,
+                key="rate_unit_radio"
             )
             
             if rate_unit == "연이율":
                 annual_return_text = st.text_input(
                     "연수익률 (%)",
                     value="7.0",
-                    help="연간 기대 수익률"
+                    help="연간 기대 수익률",
+                    key="annual_return_text"
                 )
                 try:
                     annual_return = float(annual_return_text.replace(',', ''))
@@ -127,7 +137,8 @@ def investment_calculator():
                 monthly_return_text = st.text_input(
                     "월수익률 (%)",
                     value="0.6",
-                    help="월간 기대 수익률"
+                    help="월간 기대 수익률",
+                    key="monthly_return_text"
                 )
                 try:
                     monthly_return = float(monthly_return_text.replace(',', ''))
@@ -142,7 +153,8 @@ def investment_calculator():
         compound_freq = st.selectbox(
             "복리 계산 주기",
             options=["월 복리", "분기 복리", "반기 복리", "연 복리"],
-            index=0
+            index=0,
+            key="compound_freq_select"
         )
         
         if compound_freq == "월 복리":
@@ -161,7 +173,7 @@ def investment_calculator():
     else:
         effective_monthly_rate = monthly_rate
     
-    if st.button("계산하기", key="investment_button", use_container_width=True):
+    if st.button("계산하기", key="calculate_button", use_container_width=True):
         # 투자 주기에 따른 기여금 조정
         if contribution_period == "연 납입":
             monthly_equivalent = monthly_contribution / 12
@@ -209,7 +221,8 @@ def investment_calculator():
             display_interval = st.selectbox(
                 "표시 간격",
                 options=["연도별", "월별", "분기별"],
-                index=0
+                index=0,
+                key="display_interval_select_fv"
             )
             
             if display_interval == "연도별":
@@ -316,7 +329,8 @@ def investment_calculator():
             display_interval = st.selectbox(
                 "표시 간격",
                 options=["연도별", "월별", "분기별"],
-                index=0
+                index=0,
+                key="display_interval_select_pv"
             )
             
             if display_interval == "연도별":
