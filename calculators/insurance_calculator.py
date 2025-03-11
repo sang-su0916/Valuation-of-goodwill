@@ -22,7 +22,7 @@ def insurance_calculator():
     
     with col1:
         age = st.number_input("가장의 현재 나이", min_value=20, max_value=80, value=40)
-        dependents = st.number_input("자녀 수", min_value=0, max_value=10, value=2)
+        dependents = st.number_input("자녀 수", min_value=0, max_value=10, value=3)
         spouse_exists = st.checkbox("배우자 유무", value=True)
         
         if spouse_exists:
@@ -89,13 +89,13 @@ def insurance_calculator():
         
         disability_insurance_text = st.text_input(
             "소득보장보험 월 보장금액 (원)",
-            value="0",
+            value="1,000,000",
             help="숫자만 입력하세요. 예: 1000000"
         )
         try:
             disability_insurance = int(disability_insurance_text.replace(',', ''))
         except:
-            disability_insurance = 0
+            disability_insurance = 1000000
     
     with col2:
         critical_illness_insurance_text = st.text_input(
