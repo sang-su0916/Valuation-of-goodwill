@@ -605,9 +605,3 @@ def investment_calculator():
                 scenario_df = pd.DataFrame(scenarios)
                 
                 # 숫자 포맷팅
-                for col in ["초기 투자금", "월 납입금", "총 투자액", "투자 수익"]:
-                    scenario_df[col] = scenario_df[col].map('{:,.0f}'.format)
-                
-                scenario_df["수익률"] = scenario_df["수익률"].map('{:.2f}%'.format)
-                
-                st.table(scenario_
