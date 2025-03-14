@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import re
 
 def calculate_simple_interest(principal, rate, time):
     """단리 계산 함수"""
@@ -60,7 +61,46 @@ def parse_input_number(text):
     """입력 텍스트에서 콤마 제거하고 숫자 변환"""
     if not text:
         return 0
-    return int(text.replace(",", ""))
+    # 콤마와 공백 제거
+    cleaned_text = re.sub(r'[,\s]', '', text)
+    try:
+        return int(cleaned_text)
+    except ValueError:
+        return 0
+
+def format_with_commas(number):
+    """자동으로 콤마 표시하기"""
+    if isinstance(number, str):
+        # 이미 문자열이면 숫자만 추출
+        number = parse_input_number(number)
+    return f"{number:,}"
+
+# 입력 필드에 콤마 표시하는 커스텀 input 함수
+def comma_number_input(label, value, key=None, help=None):
+    # 키가 없으면 라벨을 기반으로 만듦
+    if key is None:
+        key = f"{label}_key"
+    
+    # 세션 상태에 값이 없으면 초기화
+    if f"{key}_value" not in st.session_state:
+        st.session_state[f"{key}_value"] = value
+        st.session_state[f"{key}_formatted"] = format_with_commas(value)
+    
+    # 텍스트 입력 필드 표시
+    new_value = st.text_input(
+        label=label,
+        value=st.session_state[f"{key}_formatted"],
+        key=key,
+        help=help
+    )
+    
+    # 값이 변경됐으면 파싱하고 포맷팅된 값 업데이트
+    if new_value != st.session_state[f"{key}_formatted"]:
+        parsed_value = parse_input_number(new_value)
+        st.session_state[f"{key}_value"] = parsed_value
+        st.session_state[f"{key}_formatted"] = format_with_commas(parsed_value)
+    
+    return st.session_state[f"{key}_value"]
 
 def savings_calculator_tab():
     st.header("예적금 계산기 💰")
@@ -85,12 +125,12 @@ def simple_compound_calculator():
         st.subheader("입력 정보")
         
         # 원금 입력 (콤마 표시)
-        principal_text = st.text_input(
+        principal = comma_number_input(
             "원금 (원)", 
-            value="10,000,000",
+            10000000,
+            key="simple_principal",
             help="원금을 입력하세요. 콤마(,)는 자동으로 처리됩니다."
         )
-        principal = parse_input_number(principal_text)
         
         interest_rate = st.number_input("연이율 (%)", min_value=0.1, max_value=20.0, value=3.0, step=0.1)
         investment_period = st.number_input("투자 기간 (년)", min_value=0.5, max_value=50.0, value=5.0, step=0.5)
@@ -307,20 +347,20 @@ def deposit_installment_calculator():
         st.subheader("입력 정보")
         
         # 예금 원금 입력 (콤마 표시)
-        principal_text = st.text_input(
+        principal = comma_number_input(
             "예금 원금 (원)", 
-            value="10,000,000",
+            10000000,
+            key="deposit_principal",
             help="예금은 한 번에 맡기는 목돈입니다. 콤마(,)는 자동으로 처리됩니다."
         )
-        principal = parse_input_number(principal_text)
         
         # 적금 월 납입액 입력 (콤마 표시)
-        monthly_deposit_text = st.text_input(
-            "적금 월 납입액 (원)", 
-            value="500,000",
+        monthly_deposit = comma_number_input(
+            "적금 월 납입액 (원)",
+            500000,
+            key="monthly_deposit",
             help="적금은 매월 정기적으로 납입하는 금액입니다. 콤마(,)는 자동으로 처리됩니다."
         )
-        monthly_deposit = parse_input_number(monthly_deposit_text)
         
         interest_rate = st.number_input("연이율 (%)", min_value=0.1, max_value=20.0, value=3.0, step=0.1)
         investment_period = st.number_input("저축 기간 (년)", min_value=0.5, max_value=50.0, value=2.0, step=0.5)
