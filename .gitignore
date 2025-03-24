@@ -1,0 +1,19 @@
+# 가상환경
+venv/
+env/
+*.pyc
+__pycache__/
+
+# IDE 파일
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 기타 파일
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local 
