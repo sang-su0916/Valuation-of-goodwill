@@ -135,7 +135,7 @@ if 'calculate' in st.session_state and st.session_state.calculate:
         
         # 더 정교한 성장 모델 적용
         revenues = [revenue * (1 + growth_rate/100 * math.exp(-0.1 * year) * industry_factor)**year for year in years]
-        profit_margin = operating_profit/revenue * risk_factor
+        profit_margin = operating_profit/revenue * risk_factor if revenue > 0 else 0
         profits = [rev * profit_margin for rev in revenues]
         
         # 전문가용 할인율 조정
@@ -143,7 +143,7 @@ if 'calculate' in st.session_state and st.session_state.calculate:
     else:
         # 기본 모드 계산 (단순한 모델)
         revenues = [revenue * (1 + growth_rate/100)**year for year in years]
-        profits = [rev * (operating_profit/revenue) for rev in revenues]
+        profits = [rev * (operating_profit/revenue) if revenue > 0 else 0 for rev in revenues]
         adjusted_discount_rate = discount_rate
     
     # 결과 표시
@@ -212,17 +212,18 @@ if 'calculate' in st.session_state and st.session_state.calculate:
                 sensitivity_data.append(row)
             
             # 히트맵으로 표시
-            fig = go.Figure(data=go.Heatmap(
-                z=sensitivity_data,
-                x=[f'{d:.1f}%' for d in discount_range],
-                y=[f'{g:.1f}%' for g in growth_range if g >= 0],
-                colorscale='Viridis',
-                hoverongaps=False))
-            fig.update_layout(
-                title='성장률/할인율 민감도 분석',
-                xaxis_title='할인율',
-                yaxis_title='성장률')
-            st.plotly_chart(fig)
+            if sensitivity_data:
+                fig = go.Figure(data=go.Heatmap(
+                    z=sensitivity_data,
+                    x=[f'{d:.1f}%' for d in discount_range],
+                    y=[f'{g:.1f}%' for g in growth_range if g >= 0],
+                    colorscale='Viridis',
+                    hoverongaps=False))
+                fig.update_layout(
+                    title='성장률/할인율 민감도 분석',
+                    xaxis_title='할인율',
+                    yaxis_title='성장률')
+                st.plotly_chart(fig)
     
     st.metric("영업권 평가액", f"{goodwill_value:,.0f} 백만원")
     
@@ -258,7 +259,6 @@ if 'calculate' in st.session_state and st.session_state.calculate:
         }
         
         pdf_buffer = create_pdf_report(report_data)
-        pdf_b64 = base64.b64encode(pdf_buffer.read()).decode()
         
         st.download_button(
             label="평가 보고서 다운로드 (PDF)",
