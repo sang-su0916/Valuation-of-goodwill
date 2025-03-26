@@ -3,4 +3,5 @@ pandas
 numpy
 plotly
 reportlab
-python-dotenv 
+python-dotenv
+google-generativeai 
