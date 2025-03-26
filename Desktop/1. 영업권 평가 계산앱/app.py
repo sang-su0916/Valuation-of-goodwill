@@ -1,8 +1,13 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
+# 조건부 import로 변경
+try:
+    import plotly.express as px
+    import plotly.graph_objects as go
+    PLOTLY_AVAILABLE = True
+except ImportError:
+    PLOTLY_AVAILABLE = False
 from datetime import datetime
 import os
 import base64
@@ -172,9 +177,13 @@ if 'calculate' in st.session_state and st.session_state.calculate:
                 st.dataframe(df_revenue)
                 
                 # 매출액 차트
-                fig_revenue = px.line(df_revenue, x='연도', y='매출액', 
-                                    title='연도별 예측 매출액')
-                st.plotly_chart(fig_revenue)
+                if PLOTLY_AVAILABLE:
+                    try:
+                        fig_revenue = px.line(df_revenue, x='연도', y='매출액', 
+                                          title='연도별 예측 매출액')
+                        st.plotly_chart(fig_revenue)
+                    except Exception as e:
+                        st.warning(f"차트 생성 중 오류 발생: {str(e)}")
             
             with col2:
                 st.subheader("예측 영업이익")
@@ -185,9 +194,13 @@ if 'calculate' in st.session_state and st.session_state.calculate:
                 st.dataframe(df_profit)
                 
                 # 영업이익 차트
-                fig_profit = px.line(df_profit, x='연도', y='영업이익',
-                                    title='연도별 예측 영업이익')
-                st.plotly_chart(fig_profit)
+                if PLOTLY_AVAILABLE:
+                    try:
+                        fig_profit = px.line(df_profit, x='연도', y='영업이익',
+                                          title='연도별 예측 영업이익')
+                        st.plotly_chart(fig_profit)
+                    except Exception as e:
+                        st.warning(f"차트 생성 중 오류 발생: {str(e)}")
             
             # 영업권 가치 계산 (나누기 연산에서 0으로 나누는 오류 방지)
             present_values = [profit / ((1 + max(0.1, adjusted_discount_rate)/100)**year) for year, profit in zip(years, profits)]
@@ -209,43 +222,46 @@ if 'calculate' in st.session_state and st.session_state.calculate:
                 
                 with col4:
                     st.subheader("민감도 분석")
-                    try:
-                        # 성장률과 할인율 변화에 따른 영업권 가치 변화 계산
-                        growth_range = [max(0.1, growth_rate - 2), growth_rate, growth_rate + 2]
-                        discount_range = [max(0.1, adjusted_discount_rate - 2), adjusted_discount_rate, adjusted_discount_rate + 2]
-                        
-                        sensitivity_data = []
-                        for g in growth_range:
-                            if g < 0.1: 
-                                g = 0.1  # 최소 성장률 보장
-                            row = []
-                            for d in discount_range:
-                                if d <= 0: 
-                                    d = 0.1  # 최소 할인율 보장
-                                try:
-                                    rev = [revenue * (1 + g/100 * math.exp(-0.1 * year) * industry_factor)**year for year in years]
-                                    prof = [r * profit_margin for r in rev]
-                                    pv = [p / ((1 + d/100)**year) for year, p in zip(years, prof)]
-                                    row.append(sum(pv))
-                                except:
-                                    row.append(0)  # 계산 오류 시 0으로 설정
-                            sensitivity_data.append(row)
-                        
-                        # 히트맵으로 표시
-                        if sensitivity_data and len(sensitivity_data) > 0 and all(len(row) > 0 for row in sensitivity_data):
-                            fig = go.Figure(data=go.Heatmap(
-                                z=sensitivity_data,
-                                x=[f'{d:.1f}%' for d in discount_range if d > 0],
-                                y=[f'{g:.1f}%' for g in growth_range if g >= 0],
-                                colorscale='Viridis',
-                                hoverongaps=False))
-                            fig.update_layout(
-                                title='성장률/할인율 민감도 분석',
-                                xaxis_title='할인율',
-                                yaxis_title='성장률')
-                            st.plotly_chart(fig)
-                    except Exception as e:
-                        st.warning(f"민감도 분석 중 오류가 발생했습니다: {str(e)}")
+                    if PLOTLY_AVAILABLE:
+                        try:
+                            # 성장률과 할인율 변화에 따른 영업권 가치 변화 계산
+                            growth_range = [max(0.1, growth_rate - 2), growth_rate, growth_rate + 2]
+                            discount_range = [max(0.1, adjusted_discount_rate - 2), adjusted_discount_rate, adjusted_discount_rate + 2]
+                            
+                            sensitivity_data = []
+                            for g in growth_range:
+                                if g < 0.1: 
+                                    g = 0.1  # 최소 성장률 보장
+                                row = []
+                                for d in discount_range:
+                                    if d <= 0: 
+                                        d = 0.1  # 최소 할인율 보장
+                                    try:
+                                        rev = [revenue * (1 + g/100 * math.exp(-0.1 * year) * industry_factor)**year for year in years]
+                                        prof = [r * profit_margin for r in rev]
+                                        pv = [p / ((1 + d/100)**year) for year, p in zip(years, prof)]
+                                        row.append(sum(pv))
+                                    except:
+                                        row.append(0)  # 계산 오류 시 0으로 설정
+                                sensitivity_data.append(row)
+                            
+                            # 히트맵으로 표시
+                            if sensitivity_data and len(sensitivity_data) > 0 and all(len(row) > 0 for row in sensitivity_data):
+                                fig = go.Figure(data=go.Heatmap(
+                                    z=sensitivity_data,
+                                    x=[f'{d:.1f}%' for d in discount_range if d > 0],
+                                    y=[f'{g:.1f}%' for g in growth_range if g >= 0],
+                                    colorscale='Viridis',
+                                    hoverongaps=False))
+                                fig.update_layout(
+                                    title='성장률/할인율 민감도 분석',
+                                    xaxis_title='할인율',
+                                    yaxis_title='성장률')
+                                st.plotly_chart(fig)
+                        except Exception as e:
+                            st.warning(f"민감도 분석 중 오류가 발생했습니다: {str(e)}")
+                    else:
+                        st.info("민감도 분석을 위해서는 plotly 패키지가 필요합니다.")
             
             st.metric("영업권 평가액", f"{goodwill_value:,.0f} 백만원")
             
