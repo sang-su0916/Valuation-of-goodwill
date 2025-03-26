@@ -5,18 +5,22 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 import os
-from dotenv import load_dotenv
 import base64
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
 import math
 
-# 환경 변수 로드
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    # 환경 변수 로드 시도
+    load_dotenv()
+except ImportError:
+    # dotenv 패키지가 설치되지 않은 경우 대체 로직
+    pass
 
 # API 키 설정 (환경 변수에서 가져오거나 기본값 사용)
-default_api_key = os.getenv("GEMINI_API_KEY", "")
+default_api_key = os.environ.get("GEMINI_API_KEY", "")
 
 # 페이지 기본 설정
 st.set_page_config(
