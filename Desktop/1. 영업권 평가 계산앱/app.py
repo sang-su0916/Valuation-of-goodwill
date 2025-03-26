@@ -1,6 +1,4 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
 from datetime import datetime
 
 # 페이지 기본 설정
@@ -57,19 +55,15 @@ if calculate:
         
         with col1:
             st.subheader("예측 매출액")
-            revenue_data = {
-                '연도': [f'{year}년차' for year in years],
-                '매출액': revenues
-            }
-            st.dataframe(pd.DataFrame(revenue_data))
+            st.write("### 예측 매출액 표")
+            for i, year in enumerate(years):
+                st.write(f"{year}년차: {revenues[i]:,.0f} 백만원")
         
         with col2:
             st.subheader("예측 영업이익")
-            profit_data = {
-                '연도': [f'{year}년차' for year in years],
-                '영업이익': profits
-            }
-            st.dataframe(pd.DataFrame(profit_data))
+            st.write("### 예측 영업이익 표")
+            for i, year in enumerate(years):
+                st.write(f"{year}년차: {profits[i]:,.0f} 백만원")
         
         # 영업권 가치 계산
         present_values = []
@@ -86,19 +80,13 @@ if calculate:
         
         # 평가 요약
         st.subheader("평가 요약")
-        summary_data = {
-            "구분": ["회사명", "평가기준일", "매출액", "영업이익", "성장률", "할인율", "영업권 평가액"],
-            "내용": [
-                company_name if company_name else "미입력",
-                evaluation_date.strftime("%Y-%m-%d"),
-                f"{revenue:,.0f} 백만원",
-                f"{operating_profit:,.0f} 백만원",
-                f"{growth_rate:.1f}%",
-                f"{adjusted_discount_rate:.1f}%",
-                f"{goodwill_value:,.0f} 백만원"
-            ]
-        }
-        st.table(pd.DataFrame(summary_data))
+        st.write(f"회사명: {company_name if company_name else '미입력'}")
+        st.write(f"평가기준일: {evaluation_date.strftime('%Y-%m-%d')}")
+        st.write(f"매출액: {revenue:,.0f} 백만원")
+        st.write(f"영업이익: {operating_profit:,.0f} 백만원")
+        st.write(f"성장률: {growth_rate:.1f}%")
+        st.write(f"할인율: {adjusted_discount_rate:.1f}%")
+        st.write(f"영업권 평가액: {goodwill_value:,.0f} 백만원")
     
     except Exception as e:
         st.error(f"계산 중 오류가 발생했습니다: {str(e)}")
