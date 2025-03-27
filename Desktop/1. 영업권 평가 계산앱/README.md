@@ -14,26 +14,24 @@
 
 ## 개발 상태
 
-현재 버전은 기본적인 초과이익법 평가만 구현된 Phase 1 상태입니다. 이후 버전에서 아래 기능들이 순차적으로 추가될 예정입니다:
-
-- Phase 2: 현금흐름할인법(DCF), 시장가치비교법 추가
-- Phase 3: 민감도 분석, 업종별 벤치마크 데이터베이스, PDF 보고서 생성 고도화
+현재 버전은 초과이익법, 현금흐름할인법(DCF), 시장가치비교법이 모두 구현된 상태입니다.
+향후 민감도 분석, 업종별 벤치마크 데이터베이스, PDF 보고서 생성 기능이 추가될 예정입니다.
 
 ## 설치 방법
 
 1. 프로젝트 클론 또는 다운로드
 
 ```bash
-git clone https://github.com/username/goodwill-valuation-system.git
-cd goodwill-valuation-system
+git clone https://github.com/sang-su0916/Basic--Goodwill-Valuation.git
+cd Basic--Goodwill-Valuation
 ```
 
 2. 가상환경 생성 및 활성화
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+.venv\Scripts\activate     # Windows
 ```
 
 3. 필요한 패키지 설치
@@ -81,8 +79,8 @@ streamlit run main.py
 
 ## 기술 스택
 
-- Python 3.7+
-- Streamlit 1.18.0+
+- Python 3.11+
+- Streamlit 1.30.0+
 - Pandas
 - NumPy
 - Plotly
