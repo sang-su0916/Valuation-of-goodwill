@@ -1,3 +1,12 @@
+# 영업권 평가 시스템 - Phase 1 구현
+
+# 이 파일은 이전 버전의 구현입니다.
+# 현재는 main.py로 새롭게 구현되었습니다.
+
+# 자세한 내용은 main.py를 참고하세요.
+# 혹은 터미널에서 아래 명령어로 새 애플리케이션을 실행하세요:
+# streamlit run main.py
+
 import streamlit as st
 import pandas as pd
 import numpy as np
