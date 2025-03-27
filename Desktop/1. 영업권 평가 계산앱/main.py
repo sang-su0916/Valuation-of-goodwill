@@ -26,6 +26,20 @@ if 'company_data' not in st.session_state:
 if 'valuation_results' not in st.session_state:
     st.session_state.valuation_results = {}
 
+def format_number(value):
+    """숫자를 콤마가 포함된 문자열로 변환"""
+    try:
+        return f"{int(float(value)):,}"
+    except (ValueError, TypeError):
+        return ""
+
+def parse_number(value):
+    """콤마가 포함된 문자열을 숫자로 변환"""
+    try:
+        return float(value.replace(",", ""))
+    except (ValueError, TypeError):
+        return 0.0
+
 # 사이드바 함수
 def render_sidebar():
     with st.sidebar:
@@ -274,18 +288,26 @@ def excess_earnings_page():
         col1, col2 = st.columns(2)
         
         with col1:
-            normal_roi = st.number_input("정상 자본수익률 (%)", min_value=0.0, max_value=100.0, value=10.0, step=0.5)
-            excess_years = st.number_input("초과이익 인정연수", min_value=1, max_value=10, value=5)
-        
-        with col2:
+            # 정상 자본수익률 입력
+            normal_roi_input = st.text_input("정상 자본수익률 (%)", value=format_number(normal_roi))
+            if normal_roi_input:
+                normal_roi = parse_number(normal_roi_input)
+            excess_years_input = st.text_input("초과이익 인정연수", value=format_number(excess_years))
+            if excess_years_input:
+                excess_years = int(parse_number(excess_years_input))
             discount_rate = st.slider("할인율 (%)", min_value=5.0, max_value=30.0, value=12.0, step=0.5)
             weight_recent = st.checkbox("최근 연도에 가중치 부여", value=True)
         
-        # 고급 설정
-        with st.expander("고급 설정"):
-            adjustment_factor = st.slider("조정 계수", min_value=0.5, max_value=1.5, value=1.0, step=0.1)
-            industry_premium = st.number_input("산업 프리미엄 (%)", min_value=0.0, max_value=10.0, value=2.0, step=0.5)
-        
+        with col2:
+            # 산업 프리미엄 입력
+            industry_premium_input = st.text_input("산업 프리미엄 (%)", value=format_number(industry_premium))
+            if industry_premium_input:
+                industry_premium = parse_number(industry_premium_input)
+            
+            # 고급 설정
+            with st.expander("고급 설정"):
+                adjustment_factor = st.slider("조정 계수", min_value=0.5, max_value=1.5, value=1.0, step=0.1)
+            
         calculate_button = st.form_submit_button("평가 계산")
         
         if calculate_button:
@@ -953,14 +975,9 @@ def market_comparison_page():
             default_multiple = industry_multiples[industry][selected_metric]
             
             # 사용자 정의 배수 입력 허용
-            multiple = st.number_input(
-                f"업종 평균 배수 ({selected_metric})", 
-                min_value=0.1, 
-                max_value=30.0, 
-                value=default_multiple,
-                step=0.1,
-                help=f"{industry} 업종의 {selected_metric} 배수 평균값은 {default_multiple}입니다."
-            )
+            multiple_input = st.text_input("배수", value=format_number(multiple))
+            if multiple_input:
+                multiple = parse_number(multiple_input)
             
             # 조정 계수 설정
             adjustment_factor = st.slider(

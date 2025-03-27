@@ -39,20 +39,55 @@ with col1:
     industry = st.selectbox("산업군", ["제조업", "서비스업", "IT/소프트웨어", "유통/물류", "금융", "기타"])
     
 with col2:
-    business_years = st.number_input("사업 운영 기간(년)", min_value=1, max_value=50, value=5)
-    employee_count = st.number_input("직원 수", min_value=1, value=10)
+    def format_number(value):
+        """숫자를 콤마가 포함된 문자열로 변환"""
+        try:
+            return f"{int(float(value)):,}"
+        except (ValueError, TypeError):
+            return ""
+
+    def parse_number(value):
+        """콤마가 포함된 문자열을 숫자로 변환"""
+        try:
+            return float(value.replace(",", ""))
+        except (ValueError, TypeError):
+            return 0.0
+
+    # 사업 운영 기간 입력
+    business_years_input = st.text_input("사업 운영 기간(년)", value=format_number(business_years))
+    if business_years_input:
+        business_years = int(parse_number(business_years_input))
+
+    # 직원 수 입력
+    employee_count_input = st.text_input("직원 수", value=format_number(employee_count))
+    if employee_count_input:
+        employee_count = int(parse_number(employee_count_input))
 
 # 재무 정보 입력
 st.header("재무 정보")
 col3, col4 = st.columns(2)
 
 with col3:
-    revenue = st.number_input("매출액 (백만원)", min_value=0.1, value=1000.0)
-    operating_profit = st.number_input("영업이익 (백만원)", value=100.0)
+    # 매출액 입력
+    revenue_input = st.text_input("매출액 (백만원)", value=format_number(revenue))
+    if revenue_input:
+        revenue = parse_number(revenue_input)
+
+    # 영업이익 입력
+    operating_profit_input = st.text_input("영업이익 (백만원)", value=format_number(operating_profit))
+    if operating_profit_input:
+        operating_profit = parse_number(operating_profit_input)
     
 with col4:
-    net_income = st.number_input("당기순이익 (백만원)", value=70.0)
-    total_assets = st.number_input("총자산 (백만원)", min_value=0.1, value=500.0)
+    # 당기순이익 입력
+    net_income_input = st.text_input("당기순이익 (백만원)", value=format_number(net_income))
+    if net_income_input:
+        net_income = parse_number(net_income_input)
+
+    # 총자산 입력
+    total_assets_input = st.text_input("총자산 (백만원)", value=format_number(total_assets))
+    if total_assets_input:
+        total_assets = parse_number(total_assets_input)
 
 # 성장률 및 할인율 입력
 st.header("평가 매개변수")
